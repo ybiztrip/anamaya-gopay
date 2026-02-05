@@ -1,6 +1,7 @@
 package anamaya.gopay.hotel.model.response;
 
-import com.biztrip.external.hotel.model.request.GuestInfoRequestModel;
+
+import anamaya.gopay.hotel.model.request.GuestInfoRequestModel;
 
 import java.util.ArrayList;
 import java.util.List;

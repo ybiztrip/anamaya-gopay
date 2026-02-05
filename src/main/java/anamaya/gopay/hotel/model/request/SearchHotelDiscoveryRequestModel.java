@@ -1,6 +1,6 @@
 package anamaya.gopay.hotel.model.request;
 
-import com.biztrip.external.global.utils.Constants;
+//import com.biztrip.external.global.utils.Constants;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class SearchHotelDiscoveryRequestModel {
         this.displayCurrency = "";
         this.isMultiroom = false;
         this.isExtended = true;
-        this.sortBy = Constants.SEARCH_HOTEL_SORT_PARAM_HIGHEST_PRICE;
+//        this.sortBy = Constants.SEARCH_HOTEL_SORT_PARAM_HIGHEST_PRICE;
         this.filters = new SearchHotelFilterRequestModel();
         this.cursor = null;
         this.page = 1;
