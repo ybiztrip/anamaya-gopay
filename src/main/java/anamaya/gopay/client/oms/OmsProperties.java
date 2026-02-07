@@ -11,4 +11,6 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "external.anamaya-oms")
 public class OmsProperties {
     private String baseUrl;
+    private String email;
+    private String password;
 }
