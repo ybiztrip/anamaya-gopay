@@ -16,14 +16,12 @@ public class ApiResponse<T> {
     private String message;
     private T data;
 
-    // Optional pagination fields (null if not paginated)
     private Long totalElements;
     private Integer totalPages;
     private Boolean last;
     private Integer size;
     private Integer number;
 
-    // ✅ Normal success (single or list, without pagination)
     public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()
             .success(true)
@@ -32,7 +30,6 @@ public class ApiResponse<T> {
             .build();
     }
 
-    // ✅ Success with pagination
     public static <T> ApiResponse<T> paginatedSuccess(
         T data,
         long totalElements,
@@ -53,7 +50,6 @@ public class ApiResponse<T> {
             .build();
     }
 
-    // ✅ Error case
     public static <T> ApiResponse<T> error(String message) {
         return ApiResponse.<T>builder()
             .success(false)
