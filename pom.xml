@@ -72,6 +72,19 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- Opensearch -->
+        <dependency>
+            <groupId>org.opensearch.client</groupId>
+            <artifactId>opensearch-java</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opensearch.client</groupId>
+            <artifactId>opensearch-rest-client</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+
 	</dependencies>
 
 	<build>

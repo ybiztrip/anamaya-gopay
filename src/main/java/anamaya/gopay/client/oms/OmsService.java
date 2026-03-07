@@ -1,9 +1,6 @@
 package anamaya.gopay.client.oms;
 
-import anamaya.gopay.dto.request.BookingCreateRequest;
-import anamaya.gopay.dto.request.BookingHotelSubmitRequest;
-import anamaya.gopay.dto.request.HotelRoomRateRequest;
-import anamaya.gopay.dto.request.LoginRequest;
+import anamaya.gopay.dto.request.*;
 import anamaya.gopay.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +38,19 @@ public class OmsService {
             .bodyValue(request)
             .retrieve()
             .bodyToMono(new ParameterizedTypeReference<ApiResponse<LoginResponse>>() {})
+            .block();
+
+        return response.getData();
+    }
+
+    public List<HotelGeoResponse> getGeoList(String token, HotelGeoListRequest request) {
+        ApiResponse<List<HotelGeoResponse>> response = webClient.post()
+            .uri(properties.getBaseUrl() + "/api/v1/hotel/geo/list")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer "+token)
+            .bodyValue(request)
+            .retrieve()
+            .bodyToMono(new ParameterizedTypeReference<ApiResponse<List<HotelGeoResponse>>>() {})
             .block();
 
         return response.getData();
