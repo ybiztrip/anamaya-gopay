@@ -35,8 +35,6 @@ public class HotelRoomRateRequest {
     @Positive(message = "numAdults must be positive")
     private int numAdults;
 
-    private int numChildrens = 0;
-
     @NotBlank(message = "displayCurrency is required")
     private String displayCurrency;
 
