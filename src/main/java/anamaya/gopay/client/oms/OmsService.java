@@ -2,7 +2,6 @@ package anamaya.gopay.client.oms;
 
 import anamaya.gopay.dto.request.*;
 import anamaya.gopay.dto.response.*;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -52,6 +51,24 @@ public class OmsService {
             .retrieve()
             .bodyToMono(new ParameterizedTypeReference<ApiResponse<List<HotelGeoResponse>>>() {})
             .block();
+
+        return response.getData();
+    }
+
+    public HotelPropertyRateResponse getPropertyRate(String token, HotelPropertyRateRequest request) {
+
+        ApiResponse<HotelPropertyRateResponse> response = webClient.post()
+            .uri(properties.getBaseUrl() + "/api/v1/hotel/property-rate")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer " + token)
+            .bodyValue(request)
+            .retrieve()
+            .bodyToMono(new ParameterizedTypeReference<ApiResponse<HotelPropertyRateResponse>>() {})
+            .block();
+
+        if (response == null) {
+            return null;
+        }
 
         return response.getData();
     }
