@@ -105,7 +105,9 @@ public class HotelService {
         }
         String redisKey = "getDiscoveryRate:_checkIn_" + request.getCheckInDate()
             + "_checkOut_" + request.getCheckOutDate()
+            + "_appType_" + request.getAppType()
             + "_geoId_" + request.getGeoId()
+            + "_area_" + request.getArea()
             + "_numAdult_" + request.getNumAdults()
             + "_numRooms_" + request.getNumRooms()
             + "_minPrice_" + request.getFilters().getPriceRange().getMin()
@@ -165,6 +167,7 @@ public class HotelService {
         bool.setBool(boolDetail);
 
         OpenSearchBoolRootRequestModel boolRoot = new OpenSearchBoolRootRequestModel();
+        boolRoot.setAppType(request.getAppType());
         boolRoot.setQuery(bool);
         boolRoot.setFrom(from);
         boolRoot.setSize(size);

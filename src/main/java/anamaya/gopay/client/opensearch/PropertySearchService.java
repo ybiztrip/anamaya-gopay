@@ -19,12 +19,11 @@ import java.util.List;
 public class PropertySearchService {
 
     private final OpenSearchClient client;
-
-    @Value("${opensearch.index}")
-    private String index;
+    private final IndexResolver indexResolver;
 
     public List<OpenSearchHotelDocument> search(OpenSearchBoolRootRequestModel request) {
 
+        String index = indexResolver.resolve(request.getAppType());
         try {
 
             List<Query> filters = new ArrayList<>();

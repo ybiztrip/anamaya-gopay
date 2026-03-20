@@ -18,6 +18,9 @@ import java.util.List;
 @Builder
 public class HotelDiscoveryRequest {
 
+    @NotBlank(message = "App type is required")
+    private String appType;
+
     @NotBlank(message = "Area is required")
     private String area;
 
