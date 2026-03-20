@@ -4,15 +4,23 @@ import anamaya.gopay.client.oms.OmsService;
 import anamaya.gopay.client.opensearch.PropertySearchService;
 import anamaya.gopay.dto.request.*;
 import anamaya.gopay.dto.response.*;
+import anamaya.gopay.entity.GeoEntity;
 import anamaya.gopay.exception.AccessDeniedException;
+import anamaya.gopay.repository.GeoRepository;
+import anamaya.gopay.specification.GeoSpecification;
 import anamaya.gopay.util.RedisHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,14 +35,57 @@ public class HotelService {
     private final OmsService omsService;
     private final RedisHelper redisHelper;
     private final ObjectMapper objectMapper;
-
+    private final GeoRepository geoRepository;
     public List<HotelGeoResponse> getGeoList(HotelGeoListRequest request) {
         String token = authenticationService.getTokenOMS();
-        if(token == null || token.isBlank()) {
+        if (token == null || token.isBlank()) {
             throw new AccessDeniedException("Invalid authentication");
         }
 
-        return omsService.getGeoList(token, request);
+        String redisKey = String.format(
+            "geoList:%s:%s:%d:%d",
+            request.getKey(),
+            request.getParentId(),
+            request.getLimit(),
+            request.getOffset()
+        );
+
+        String cachedData = redisHelper.getDataFromRedis(redisKey);
+        if (cachedData != null && !cachedData.isEmpty()) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                return Arrays.asList(
+                    objectMapper.readValue(cachedData, HotelGeoResponse[].class)
+                );
+            } catch (Exception e) {
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+
+        int page = request.getOffset() / request.getLimit();
+        Pageable pageable = PageRequest.of(page, request.getLimit(), Sort.by("name").ascending());
+
+        Page<GeoEntity> geoList = geoRepository.findAll(
+            GeoSpecification.containsKeyAndParentId(request.getKey(), request.getParentId()),
+            pageable
+        );
+
+        List<HotelGeoResponse> response = geoList.getContent()
+            .stream()
+            .map(this::toHotelGeoResponse)
+            .toList();
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String json = objectMapper.writeValueAsString(response);
+
+            int ttlSeconds = 300; // 5 minutes (adjust sesuai kebutuhan)
+            redisHelper.saveDataToRedis(redisKey, json, ttlSeconds);
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+
+        return response;
     }
 
     public List<HotelRoomRateResponse> getHotelRoomRate(HotelRoomRateRequest request) {
@@ -278,4 +329,24 @@ public class HotelService {
         return starRatings;
     }
 
+    private HotelGeoResponse toHotelGeoResponse(GeoEntity entity) {
+        HotelGeoResponse.Centro centro = null;
+
+        if (entity.getCentroid() != null && !entity.getCentroid().isBlank()) {
+            try {
+                centro = objectMapper.readValue(entity.getCentroid(), HotelGeoResponse.Centro.class);
+            } catch (Exception e) {
+                // optional: log error
+            }
+        }
+
+        return HotelGeoResponse.builder()
+            .geoId(entity.getGeoId())
+            .parentId(entity.getParentId())
+            .type(entity.getType())
+            .name(entity.getName())
+            .localeName(entity.getLocaleName())
+            .centroId(centro)
+            .build();
+    }
 }

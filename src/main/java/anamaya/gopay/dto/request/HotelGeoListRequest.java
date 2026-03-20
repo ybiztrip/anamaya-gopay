@@ -19,6 +19,8 @@ public class HotelGeoListRequest {
     @NotBlank(message = "Key is required")
     private String key;
 
+    private String parentId;
+
     @NotNull(message = "Offset is required")
     private Integer offset;
 
