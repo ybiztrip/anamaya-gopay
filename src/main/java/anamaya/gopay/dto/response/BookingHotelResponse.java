@@ -13,10 +13,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingHotelSubmitResponse {
+public class BookingHotelResponse {
     private Long id;
     private Long companyId;
     private Long bookingId;
+    private String bookingCode;
     private String clientSource;
     private String itemId;
     private String rateKey;

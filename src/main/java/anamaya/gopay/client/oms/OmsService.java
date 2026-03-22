@@ -87,20 +87,29 @@ public class OmsService {
     }
 
     public BookingCreateResponse bookingCreate(String token, BookingCreateRequest request) {
-        ApiResponse<BookingCreateResponse> response = webClient.post()
-            .uri(properties.getBaseUrl() + "/api/v1/bookings")
-            .contentType(MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer "+token)
-            .bodyValue(request)
-            .retrieve()
-            .bodyToMono(new ParameterizedTypeReference<ApiResponse<BookingCreateResponse>>() {})
-            .block();
+        try {
+            ApiResponse<BookingCreateResponse> response = webClient.post()
+                .uri(properties.getBaseUrl() + "/api/v1/bookings")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .bodyValue(request)
+                .retrieve()
+                .onStatus(
+                    status -> status.isError(),
+                    clientResponse -> clientResponse.bodyToMono(String.class)
+                        .map(body -> new RuntimeException("OMS ERROR: " + body))
+                )
+                .bodyToMono(new ParameterizedTypeReference<ApiResponse<BookingCreateResponse>>() {})
+                .block();
 
-        return response.getData();
+            return response.getData();
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to call OMS bookingCreate", ex);
+        }
     }
 
-    public BookingHotelSubmitResponse bookingHotelSubmit(String token, Long bookingId, BookingHotelSubmitRequest request) {
-        ApiResponse<BookingHotelSubmitResponse> response = webClient.post()
+    public BookingResponse bookingHotelSubmit(String token, Long bookingId, BookingHotelSubmitRequest request) {
+        ApiResponse<BookingResponse> response = webClient.post()
             .uri(
                 properties.getBaseUrl() + "/api/v1/bookings/{id}/hotels",
                 bookingId
@@ -109,7 +118,7 @@ public class OmsService {
             .header("Authorization", "Bearer "+token)
             .bodyValue(request)
             .retrieve()
-            .bodyToMono(new ParameterizedTypeReference<ApiResponse<BookingHotelSubmitResponse>>() {})
+            .bodyToMono(new ParameterizedTypeReference<ApiResponse<BookingResponse>>() {})
             .block();
 
         return response.getData();

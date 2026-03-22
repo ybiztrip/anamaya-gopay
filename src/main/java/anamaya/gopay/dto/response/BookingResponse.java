@@ -13,14 +13,13 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingCreateResponse {
+public class BookingResponse {
     private Long id;
     private Long companyId;
     private String code;
     private String journeyCode;
     private LocalDate startDate;
     private LocalDate endDate;
-
     private String contactEmail;
     private String contactFirstName;
     private String contactLastName;
@@ -29,10 +28,8 @@ public class BookingCreateResponse {
     private String contactPhoneCode;
     private String contactPhoneNumber;
     private LocalDate contactDob;
-
     private Map<String, Object> additionalInfo;
     private Map<String, Object> clientAdditionalInfo;
-    private String status;
 
     private List<BookingHotelResponse> hotels;
 }

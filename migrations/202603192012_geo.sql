@@ -11,7 +11,7 @@ CREATE TABLE `geo` (
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `created_by` BIGINT,
   `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `updated_byag` BIGINT,
+  `updated_by` BIGINT,
   PRIMARY KEY (`id`)
 );
 
