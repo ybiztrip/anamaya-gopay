@@ -3,16 +3,20 @@ package anamaya.gopay.service;
 import anamaya.gopay.client.oms.OmsService;
 import anamaya.gopay.dto.request.BookingCreateRequest;
 import anamaya.gopay.dto.request.BookingHotelSubmitRequest;
+import anamaya.gopay.dto.request.PaymentCCListRequest;
 import anamaya.gopay.dto.response.BookingCreateResponse;
 import anamaya.gopay.dto.response.BookingHotelResponse;
 import anamaya.gopay.dto.response.BookingResponse;
+import anamaya.gopay.dto.response.PaymentCCResponse;
 import anamaya.gopay.entity.BookingLogEntity;
 import anamaya.gopay.enums.BookingLogStatus;
+import anamaya.gopay.enums.BookingPaymentMethod;
 import anamaya.gopay.repository.BookingLogRepository;
 import tools.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,6 +31,15 @@ public class BookingService {
     public BookingHotelResponse create(BookingCreateRequest request) {
         String tokenOMS = authenticationService.getTokenOMS();
 
+        List<PaymentCCResponse> paymentCCResponses = omsService.getPaymentCCList(tokenOMS, PaymentCCListRequest.builder()
+            .email(request.getContactEmail())
+            .build()
+        );
+
+        if(paymentCCResponses.isEmpty()) {
+            throw new IllegalArgumentException("Payment method not found");
+        }
+
         BookingLogEntity log = BookingLogEntity.builder()
             .status(BookingLogStatus.PENDING)
             .contactEmail(request.getContactEmail())
@@ -39,6 +52,11 @@ public class BookingService {
             //create booking journey
             BookingCreateResponse bookingCreateResponse =
                 omsService.bookingCreate(tokenOMS, request);
+
+            //temporary just for testing
+            request.getBookingHotelSubmit().getHotel().setPaymentMethod(BookingPaymentMethod.CUST_CREDIT_CARD);
+            request.getBookingHotelSubmit().getHotel().setPaymentReference1(paymentCCResponses.get(0).getName());
+            request.getBookingHotelSubmit().getHotel().setPaymentReference2(paymentCCResponses.get(0).getLastSixDigitCardNumber());
 
             //create booking hotel
             BookingResponse response =

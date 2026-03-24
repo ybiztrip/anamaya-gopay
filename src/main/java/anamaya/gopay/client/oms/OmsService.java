@@ -42,6 +42,23 @@ public class OmsService {
         return response.getData();
     }
 
+    public List<PaymentCCResponse> getPaymentCCList(String token, PaymentCCListRequest request) {
+        ApiResponse<List<PaymentCCResponse>> response = webClient.get()
+            .uri(uriBuilder -> {
+                uriBuilder.path("/api/v1/payment/credit-card");
+                if (request.getEmail() != null) {
+                    uriBuilder.queryParam("email", request.getEmail());
+                }
+                return uriBuilder.build();
+            })
+            .header("Authorization", "Bearer "+token)
+            .retrieve()
+            .bodyToMono(new ParameterizedTypeReference<ApiResponse<List<PaymentCCResponse>>>() {})
+            .block();
+
+        return response.getData();
+    }
+
     public List<HotelGeoResponse> getGeoList(String token, HotelGeoListRequest request) {
         ApiResponse<List<HotelGeoResponse>> response = webClient.post()
             .uri(properties.getBaseUrl() + "/api/v1/hotel/geo/list")

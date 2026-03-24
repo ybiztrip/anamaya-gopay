@@ -1,5 +1,6 @@
 package anamaya.gopay.dto.request;
 
+import anamaya.gopay.enums.BookingPaymentMethod;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +29,9 @@ public class BookingHotelSubmitRequest {
         private String checkOutDate;  // yyyy-MM-dd
         private Long partnerSellAmount;
         private Long partnerNettAmount;
+        private BookingPaymentMethod paymentMethod;
+        private String paymentReference1;
+        private String paymentReference2;
         private String currency;
         private String specialRequest;
     }
