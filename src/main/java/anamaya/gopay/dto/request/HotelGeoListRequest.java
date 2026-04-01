@@ -16,7 +16,6 @@ public class HotelGeoListRequest {
     @NotBlank(message = "Country code is required")
     private String countryCode;
 
-    @NotBlank(message = "Key is required")
     private String key;
 
     private String parentId;
