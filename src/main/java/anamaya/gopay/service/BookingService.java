@@ -32,7 +32,6 @@ public class BookingService {
         String tokenOMS = authenticationService.getTokenOMS();
 
         List<PaymentCCResponse> paymentCCResponses = omsService.getPaymentCCList(tokenOMS, PaymentCCListRequest.builder()
-            .email(request.getContactEmail())
             .build()
         );
 
