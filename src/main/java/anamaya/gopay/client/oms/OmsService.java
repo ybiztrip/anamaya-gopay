@@ -4,9 +4,12 @@ import anamaya.gopay.dto.request.*;
 import anamaya.gopay.dto.response.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -135,6 +138,20 @@ public class OmsService {
             .header("Authorization", "Bearer "+token)
             .bodyValue(request)
             .retrieve()
+            .onStatus(
+                status -> status.isError(),
+                res -> {
+                    HttpStatus status = HttpStatus.valueOf(res.statusCode().value());
+
+                    return res.bodyToMono(new ParameterizedTypeReference<ApiResponse<Object>>() {})
+                        .flatMap(errorBody ->
+                            Mono.error(new ResponseStatusException(
+                                status,
+                                errorBody.getMessage()
+                            ))
+                        );
+                }
+            )
             .bodyToMono(new ParameterizedTypeReference<ApiResponse<BookingResponse>>() {})
             .block();
 
