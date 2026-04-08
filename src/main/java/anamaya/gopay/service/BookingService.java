@@ -28,13 +28,12 @@ public class BookingService {
     private final AuthenticationService authenticationService;
     private final OmsService omsService;
     private final BookingLogRepository bookingLogRepository;
-    private final GopayRequestContext requestContext;
+    private final GopayRequestContext gopayRequestContext;
     private final ObjectMapper objectMapper;
 
     public List<BookingResponse> getAll(BookingListFilter request) {
         String tokenOMS = authenticationService.getTokenOMS();
-        log.info(requestContext.getGopayProfile().getPhoneNumber());
-        request.setPhoneNumber(requestContext.getGopayProfile().getPhoneNumber());
+        request.setPhoneNumber(gopayRequestContext.getGopayProfile().getPhoneNumber());
         return omsService.getBookingAll(tokenOMS, request);
     }
 
@@ -49,6 +48,7 @@ public class BookingService {
             throw new IllegalArgumentException("Payment method not found");
         }
 
+        request.setContactPhoneNumber(gopayRequestContext.getGopayProfile().getPhoneNumber());
         BookingLogEntity log = BookingLogEntity.builder()
             .status(BookingLogStatus.PENDING)
             .contactEmail(request.getContactEmail())
