@@ -158,4 +158,22 @@ public class OmsService {
         return response.getData();
     }
 
+    public List<BookingResponse> getBookingAll(String token, BookingListFilter request) {
+        ApiResponse<List<BookingResponse>> response = webClient.get()
+            .uri(uriBuilder ->
+                uriBuilder
+                    .path("/api/v1/bookings")
+                    .queryParam("page", request.getPage())
+                    .queryParam("size", request.getSize())
+                    .queryParam("phoneNumber", request.getPhoneNumber())
+                    .build()
+            )
+            .header("Authorization", "Bearer "+token)
+            .retrieve()
+            .bodyToMono(new ParameterizedTypeReference<ApiResponse<List<BookingResponse>>>() {})
+            .block();
+
+        return response.getData();
+    }
+
 }

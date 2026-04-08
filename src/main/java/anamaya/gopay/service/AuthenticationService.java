@@ -18,26 +18,26 @@ public class AuthenticationService {
     private final OmsService omsService;
     private final RedisHelper redisHelper;
 
-    public String getProfileGopay(String Authorization, String phoneNumber) {
-        String redisKey = "userGopayToken|"+phoneNumber;
-        String token = redisHelper.getDataFromRedis(redisKey);
-        if (token == null || token.isEmpty()) {
-            GopayProfileResponse profileResponse = gopayService.getProfile(Authorization);
-            token = profileResponse.getPhoneNumber();
+    public GopayProfileResponse getProfileGopay(String authorization) {
+        String redisKey = "userGopayToken|" + authorization;
+
+        GopayProfileResponse profileResponse =
+            redisHelper.getDataFromRedis(redisKey, GopayProfileResponse.class);
+
+        if (profileResponse == null) {
+            profileResponse = gopayService.getProfile(authorization);
 
             int ttlSeconds = 3600;
-            redisHelper.saveDataToRedis(redisKey, token, ttlSeconds);
-
-            return token;
+            redisHelper.saveDataToRedis(redisKey, profileResponse, ttlSeconds);
         }
 
-        return token;
+        return profileResponse;
     }
 
     public String getTokenOMS() {
         String redisKey = "userOmsToken";
         String token = redisHelper.getDataFromRedis(redisKey);
-        if (token == null || token.isEmpty()) {
+        if (token == null || token.isBlank()) {
             LoginResponse loginResponse = omsService.login();
             token = loginResponse.getToken();
 

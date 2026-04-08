@@ -11,4 +11,6 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "external.gopay")
 public class GopayProperties {
     private String baseUrl;
+    private boolean mockEnabled;
+    private String mockPhoneNumber;
 }

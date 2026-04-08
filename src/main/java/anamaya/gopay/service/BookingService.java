@@ -1,8 +1,10 @@
 package anamaya.gopay.service;
 
 import anamaya.gopay.client.oms.OmsService;
+import anamaya.gopay.context.GopayRequestContext;
 import anamaya.gopay.dto.request.BookingCreateRequest;
 import anamaya.gopay.dto.request.BookingHotelSubmitRequest;
+import anamaya.gopay.dto.request.BookingListFilter;
 import anamaya.gopay.dto.request.PaymentCCListRequest;
 import anamaya.gopay.dto.response.BookingCreateResponse;
 import anamaya.gopay.dto.response.BookingHotelResponse;
@@ -26,7 +28,15 @@ public class BookingService {
     private final AuthenticationService authenticationService;
     private final OmsService omsService;
     private final BookingLogRepository bookingLogRepository;
+    private final GopayRequestContext requestContext;
     private final ObjectMapper objectMapper;
+
+    public List<BookingResponse> getAll(BookingListFilter request) {
+        String tokenOMS = authenticationService.getTokenOMS();
+        log.info(requestContext.getGopayProfile().getPhoneNumber());
+        request.setPhoneNumber(requestContext.getGopayProfile().getPhoneNumber());
+        return omsService.getBookingAll(tokenOMS, request);
+    }
 
     public BookingHotelResponse create(BookingCreateRequest request) {
         String tokenOMS = authenticationService.getTokenOMS();
