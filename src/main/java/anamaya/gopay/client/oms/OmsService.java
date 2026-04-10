@@ -173,4 +173,15 @@ public class OmsService {
         return response.getData();
     }
 
+    public BookingResponse getBookingById(String token, Long id) {
+        ApiResponse<BookingResponse> response = webClient.get()
+            .uri("/api/v1/bookings/{id}", id)
+            .header("Authorization", "Bearer "+token)
+            .retrieve()
+            .bodyToMono(new ParameterizedTypeReference<ApiResponse<BookingResponse>>() {})
+            .block();
+
+        return response.getData();
+    }
+
 }

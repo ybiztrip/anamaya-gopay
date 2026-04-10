@@ -24,12 +24,19 @@ public class BookingController {
         return ApiResponse.success(response);
     }
 
-
     @GetMapping
     public ApiResponse<?> getAll(
         @ModelAttribute BookingListFilter filter
     ) {
         var response = bookingService.getAll(filter);
+        return ApiResponse.success(response);
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<?> getById(
+        @PathVariable Long id
+    ) {
+        var response = bookingService.getById(id);
         return ApiResponse.success(response);
     }
 

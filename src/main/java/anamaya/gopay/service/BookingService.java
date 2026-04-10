@@ -37,6 +37,11 @@ public class BookingService {
         return omsService.getBookingAll(tokenOMS, request);
     }
 
+    public BookingResponse getById(Long id) {
+        String tokenOMS = authenticationService.getTokenOMS();
+        return omsService.getBookingById(tokenOMS, id);
+    }
+
     public BookingHotelResponse create(BookingCreateRequest request) {
         String tokenOMS = authenticationService.getTokenOMS();
 
