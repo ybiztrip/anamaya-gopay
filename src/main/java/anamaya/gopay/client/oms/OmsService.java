@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
-
 import java.util.List;
 
 @Slf4j
@@ -160,13 +159,11 @@ public class OmsService {
 
     public List<BookingResponse> getBookingAll(String token, BookingListFilter request) {
         ApiResponse<List<BookingResponse>> response = webClient.get()
-            .uri(uriBuilder ->
-                uriBuilder
-                    .path("/api/v1/bookings")
-                    .queryParam("page", request.getPage())
-                    .queryParam("size", request.getSize())
-                    .queryParam("phoneNumber", request.getPhoneNumber())
-                    .build()
+            .uri(
+                "/api/v1/bookings?page={page}&size={size}&phoneNumber={phone}",
+                request.getPage(),
+                request.getSize(),
+                request.getPhoneNumber()
             )
             .header("Authorization", "Bearer "+token)
             .retrieve()
