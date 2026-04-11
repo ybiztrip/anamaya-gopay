@@ -5,6 +5,7 @@ public enum BookingHotelStatus {
     REJECTED,
     APPROVED,
     BOOKED,
+    WAITING_PAYMENT,
     ISSUED,
     CANCELLED;
 
