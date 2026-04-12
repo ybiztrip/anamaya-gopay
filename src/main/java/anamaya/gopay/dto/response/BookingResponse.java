@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ public class BookingResponse {
     private String contactPhoneCode;
     private String contactPhoneNumber;
     private LocalDate contactDob;
+    private LocalDateTime createdAt;
     private Map<String, Object> additionalInfo;
     private Map<String, Object> clientAdditionalInfo;
 
