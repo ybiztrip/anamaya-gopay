@@ -4,6 +4,7 @@ import anamaya.gopay.dto.request.*;
 import anamaya.gopay.dto.response.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -182,6 +183,28 @@ public class OmsService {
             .block();
 
         return response.getData();
+    }
+
+    public byte[] fetchFile(String token, OMSFetchFileFilter filter) {
+        byte[] response = webClient.post()
+            .uri("/api/v1/files/fetch")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_PDF)
+            .bodyValue(filter)
+            .retrieve()
+            .onStatus(status -> !status.is2xxSuccessful(),
+                clientResponse -> clientResponse.bodyToMono(String.class)
+                    .flatMap(body -> Mono.error(new RuntimeException("Failed to fetch file: " + body)))
+            )
+            .bodyToMono(byte[].class)
+            .block();
+
+        if (response == null || response.length == 0) {
+            throw new RuntimeException("Empty PDF response");
+        }
+
+        return response;
     }
 
 }

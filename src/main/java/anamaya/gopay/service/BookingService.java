@@ -2,10 +2,7 @@ package anamaya.gopay.service;
 
 import anamaya.gopay.client.oms.OmsService;
 import anamaya.gopay.context.GopayRequestContext;
-import anamaya.gopay.dto.request.BookingCreateRequest;
-import anamaya.gopay.dto.request.BookingHotelSubmitRequest;
-import anamaya.gopay.dto.request.BookingListFilter;
-import anamaya.gopay.dto.request.PaymentCCListRequest;
+import anamaya.gopay.dto.request.*;
 import anamaya.gopay.dto.response.BookingCreateResponse;
 import anamaya.gopay.dto.response.BookingHotelResponse;
 import anamaya.gopay.dto.response.BookingResponse;
@@ -40,6 +37,14 @@ public class BookingService {
     public BookingResponse getById(Long id) {
         String tokenOMS = authenticationService.getTokenOMS();
         return omsService.getBookingById(tokenOMS, id);
+    }
+
+    public byte[] fetchFile(BookingFetchFileFilter filter) {
+        String tokenOMS = authenticationService.getTokenOMS();
+        OMSFetchFileFilter omsFilter = new OMSFetchFileFilter();
+        omsFilter.setType("HOTEL");
+        omsFilter.setPartnerBookingId(filter.getCode());
+        return omsService.fetchFile(tokenOMS, omsFilter);
     }
 
     public BookingHotelResponse create(BookingCreateRequest request) {

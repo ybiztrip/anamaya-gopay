@@ -1,12 +1,16 @@
 package anamaya.gopay.controller;
 
 import anamaya.gopay.dto.request.BookingCreateRequest;
+import anamaya.gopay.dto.request.BookingFetchFileFilter;
 import anamaya.gopay.dto.request.BookingListFilter;
 import anamaya.gopay.dto.response.ApiResponse;
 import anamaya.gopay.dto.response.BookingHotelResponse;
 import anamaya.gopay.service.BookingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,6 +42,17 @@ public class BookingController {
     ) {
         var response = bookingService.getById(id);
         return ApiResponse.success(response);
+    }
+
+    @PostMapping("/file/fetch")
+    public ResponseEntity<byte[]> getDocument(
+        @RequestBody BookingFetchFileFilter filter
+    ) {
+        var response = bookingService.fetchFile(filter);
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_PDF)
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=file.pdf")
+            .body(response);
     }
 
 }
