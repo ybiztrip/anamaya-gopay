@@ -36,6 +36,7 @@ public class HotelService {
     private final RedisHelper redisHelper;
     private final ObjectMapper objectMapper;
     private final GeoRepository geoRepository;
+
     public List<HotelGeoResponse> getGeoList(HotelGeoListRequest request) {
         String token = authenticationService.getTokenOMS();
         if (token == null || token.isBlank()) {
@@ -43,11 +44,9 @@ public class HotelService {
         }
 
         String redisKey = String.format(
-            "geoList:%s:%s:%d:%d",
+            "geoList:%s:%s",
             request.getKey(),
-            request.getParentId(),
-            request.getLimit(),
-            request.getOffset()
+            request.getParentId()
         );
 
         String cachedData = redisHelper.getDataFromRedis(redisKey);
@@ -62,15 +61,12 @@ public class HotelService {
             }
         }
 
-        int page = request.getOffset() / request.getLimit();
-        Pageable pageable = PageRequest.of(page, request.getLimit(), Sort.by("name").ascending());
-
-        Page<GeoEntity> geoList = geoRepository.findAll(
+        List<GeoEntity> geoList = geoRepository.findAll(
             GeoSpecification.containsKeyAndParentId(request.getKey(), request.getParentId()),
-            pageable
+            Sort.by("name").ascending()
         );
 
-        List<HotelGeoResponse> response = geoList.getContent()
+        List<HotelGeoResponse> response = geoList
             .stream()
             .map(this::toHotelGeoResponse)
             .toList();

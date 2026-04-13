@@ -1,7 +1,6 @@
 package anamaya.gopay.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,11 +18,5 @@ public class HotelGeoListRequest {
     private String key;
 
     private String parentId;
-
-    @NotNull(message = "Offset is required")
-    private Integer offset;
-
-    @NotNull(message = "Limit is required")
-    private Integer limit;
 
 }
