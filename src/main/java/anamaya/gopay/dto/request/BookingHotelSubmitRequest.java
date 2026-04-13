@@ -34,6 +34,7 @@ public class BookingHotelSubmitRequest {
         private String paymentReference2;
         private String currency;
         private String specialRequest;
+        private Object metadata;
     }
 
     @Data

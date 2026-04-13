@@ -1,7 +1,6 @@
 package anamaya.gopay.dto.response;
 
 import anamaya.gopay.enums.BookingHotelStatus;
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,7 +31,7 @@ public class BookingHotelResponse {
     private String specialRequest;
     private String paymentUrl;
     private BookingHotelStatus status;
-    private JsonNode metadata;
+    private Object metadata;
     private LocalDateTime createdAt;
 
     private List<BookingPaxResponse> paxs;
